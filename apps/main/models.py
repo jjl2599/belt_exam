@@ -37,20 +37,6 @@ class UserManager(models.Manager):
         messages.add_message(request, messages.INFO, "Your email and password do not match!")
         return (False, 'notuser')
 
-class AppointmentManager(models.Manager):
-    def validate(self, request, post):
-        require = True
-        if len(post.get('date')) < 1 or len(post.get('time')) < 1 or len(post.get('tasks')) < 1:
-            require = False
-            messages.add_message(request, messages.INFO, "Please fill in all the fields!")
-        if post.get('date') < date.today():
-            require = False
-            messages.add_message(request, messages.INFO, "Please use a valid date!")
-        if post.get('time') < datetime.now().time:
-            require = False
-            messages.add_message(request, messages.INFO, "Please use a valid time!")
-        return(require)
-
 
 class User(models.Model):
     first_name = models.CharField(max_length=255)
@@ -69,4 +55,3 @@ class Appointment(models.Model):
     user = models.ForeignKey(User, related_name="appointments")
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
-    objects = AppointmentManager

@@ -29,7 +29,7 @@ def home(request):
 		"curr_user": User.objects.get(id=request.session['user_id']),
 		"today": today,
 		"curr_time":time,
-		"today_appointments": Appointment.objects.filter(user=user).filter(date=today).order_by("time"),
+		"today_appointments": Appointment.objects.filter(date=today).order_by("time"),
 		"future_appointments": Appointment.objects.exclude(date=today),
 	}
 	return render(request, 'main/home.html', context)
@@ -54,7 +54,6 @@ def appointments(request):
 		task = request.POST.get('task'),
 		user = User.objects.get(id=request.session["user_id"])
 	)
-	request.session['request_id'] = request.id
 	return redirect('/home')
 
 
