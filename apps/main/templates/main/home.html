@@ -5,8 +5,69 @@
 </head>
 <body>
   <div class="container">
-    Welcome {{ curr_user.first_name }}
-    <button><a href='/'>Logout</a></button>
+    <div id="userinfo">
+      Welcome {{ curr_user.first_name }}
+      <button><a href='/'>Logout</a></button>
+    </div>
+    {% if messages %}
+      {% for i in messages %}
+        <p>{{i.message }}</p>
+      {% endfor %}
+    {% endif %}
+
+    <h3>Here are your appointments for today, {{today|date:"M d, Y" }}: </h3>
+    <table>
+      <tr>
+        <th>Tasks</th>
+        <th>Time</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+      {% for appointment in today_appointments.all %}
+        <tr>
+          <td> {{appointment.task}} </td>
+          <td> {{appointment.time}} </td>
+          {% if appointment.curr_time < appointment.time %}
+            <td>Pending</td>
+          {% endif %}
+          {% if appointment.curr_time > appointment.time %}
+            <td>Done</td>
+          {% endif %}
+          <td>
+            <a href="/editpage/{{appointment.id}}">Edit</a> <a href="/delete/{{appointment.id}}">Delete</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+
+    <div id=:future_app>
+      <h3>Future Appointments:</h3>
+      <table>
+        <tr>
+          <th>Tasks</th>
+          <th>Date</th>
+          <th>Time</th>
+        </tr>
+        {% for appointment in future_appointments.all %}
+          <tr>
+            <td> {{appointment.task}} </td>
+            <td> {{appointment.date}} </td>
+            <td> {{appointment.time}} </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <div id="add_app">
+      <h3>Add Appointment</h3>
+      <form action="/appointments" method = "post">
+        {% csrf_token %}
+        <p>Date:</p><input type="date" name="date">
+        <p>Time:</p><input type="time" name="time">
+        <p>Task:</p><textarea name="task" rows="6" cols="40"></textarea>
+        <input type="submit" value = "Add">
+      </form>
+    </div>
   </div>
 <body>
 </html>

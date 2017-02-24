@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+  <title>Update Appointments</title>
+</head>
+<body>
+  <div class="container">
+    <div id ="userinfo">
+      {{ curr_user.first_name }}'s Appointment
+      <button><a href='/home'>Dashboard</a></button>
+      <button><a href='/'>Logout</a></button>
+    </div>
+    <div id="editinfo">
+      <form action="/edit" method = "post">
+        {% csrf_token %}
+        <p>Date:</p><input type="date" name="date">
+        <p>Time:</p><input type="time" name="time">
+        <p>Task:</p><textarea name="task" rows="6" cols="40"></textarea>
+        <input type="submit" value = "Add">
+      </form>
+    </div>
+    </div>
+  </div>
+<body>
+</html>

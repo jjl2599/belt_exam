@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
 from django.contrib import messages
+from datetime import datetime, date, time
 import re
 import bcrypt
 # Create your models here.
@@ -36,11 +37,36 @@ class UserManager(models.Manager):
         messages.add_message(request, messages.INFO, "Your email and password do not match!")
         return (False, 'notuser')
 
+class AppointmentManager(models.Manager):
+    def validate(self, request, post):
+        require = True
+        if len(post.get('date')) < 1 or len(post.get('time')) < 1 or len(post.get('tasks')) < 1:
+            require = False
+            messages.add_message(request, messages.INFO, "Please fill in all the fields!")
+        if post.get('date') < date.today():
+            require = False
+            messages.add_message(request, messages.INFO, "Please use a valid date!")
+        if post.get('time') < datetime.now().time:
+            require = False
+            messages.add_message(request, messages.INFO, "Please use a valid time!")
+        return(require)
+
+
 class User(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
+    birthday = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
     objects = UserManager()
+
+class Appointment(models.Model):
+    date = models.CharField(max_length=255)
+    time = models.CharField(max_length=255)
+    task = models.TextField()
+    user = models.ForeignKey(User, related_name="appointments")
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+    objects = AppointmentManager
