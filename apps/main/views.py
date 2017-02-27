@@ -30,11 +30,9 @@ def home(request):
 		"curr_user": User.objects.get(id=request.session['user_id']),
 		"today": today,
 		"curr_time":time,
-		"today_appointments": Appointment.objects.filter(date=today).order_by("time"),
-		"future_appointments": Appointment.objects.exclude(date=today),
+		"today_appointments": Appointment.objects.filter(user__id=user).filter(date=today).order_by("time"),
+		"future_appointments": Appointment.objects.filter(user__id=user).exclude(date=today).order_by("time"),
 	}
-	if request.POST.get('time') >  unicode(time):
-		Appointment.objects.update(status="Done")
 	return render(request, 'main/home.html', context)
 
 
@@ -91,7 +89,7 @@ def editpage(request, id):
 
 def edit(request, id):
 	today = date.today()
-	time = datetime.now().time
+	time = ('%H:%M', datetime.now().time)
 	valid = True
 	if len(request.POST.get('task')) < 1 or len(request.POST.get('date')) < 1 or len(request.POST.get('time')) < 1:
 		messages.add_message(request, messages.INFO, "Please fill out all your input fields!")
@@ -103,7 +101,7 @@ def edit(request, id):
 		messages.add_message(request, messages.INFO, "Please choose a future time!")
 		valid = False
 	if valid == True:
-		Appointment.objects.filter(id=id).update(task=request.POST['task'],date=request.POST['date'], time=request.POST['time'], status=status)
+		Appointment.objects.filter(id=id).update(task=request.POST['task'],date=request.POST['date'], time=request.POST['time'], status=request.POST['status'])
 	return redirect ('/home')
 
 def delete(request, id):
