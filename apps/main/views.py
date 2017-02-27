@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from datetime import datetime, date, time
+from time import strftime
 from .models import *
 import bcrypt
 # Create your views here.
@@ -51,15 +52,21 @@ def create_user(request):
 
 def appointments(request):
 	today = date.today()
-	time = datetime.now().time
+	time_today = ('%H:%M', datetime.now().time)
 	valid = True
 	if len(request.POST.get('task')) < 1 or len(request.POST.get('date')) < 1 or len(request.POST.get('time')) < 1:
 		messages.add_message(request, messages.INFO, "Please fill out all your input fields!")
 		valid = False
 	if request.POST.get('date') < unicode(today):
+		print request.POST.get('date')
+		print unicode(today)
 		messages.add_message(request, messages.INFO, "Please choose a future date!")
 		valid = False
-	if request.POST.get('date') == unicode(today) and request.POST.get('time') < unicode(time):
+	if request.POST.get('date') == unicode(today) and request.POST.get('time') < unicode(time_today):
+		print request.POST.get('date')
+		print unicode(today)
+		print request.POST.get('time')
+		print unicode(time_today)
 		messages.add_message(request, messages.INFO, "Please choose a future time!")
 		valid = False
 	if valid == True:
