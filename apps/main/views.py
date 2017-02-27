@@ -32,6 +32,8 @@ def home(request):
 		"today_appointments": Appointment.objects.filter(date=today).order_by("time"),
 		"future_appointments": Appointment.objects.exclude(date=today),
 	}
+	if request.POST.get('time') >  unicode(time):
+		Appointment.objects.update(status="Done")
 	return render(request, 'main/home.html', context)
 
 
@@ -48,12 +50,26 @@ def create_user(request):
 	return redirect('/')
 
 def appointments(request):
-	Appointment.objects.create(
-		date = str(request.POST.get('date')),
-		time = request.POST.get('time'),
-		task = request.POST.get('task'),
-		user = User.objects.get(id=request.session["user_id"])
-	)
+	today = date.today()
+	time = datetime.now().time
+	valid = True
+	if len(request.POST.get('task')) < 1 or len(request.POST.get('date')) < 1 or len(request.POST.get('time')) < 1:
+		messages.add_message(request, messages.INFO, "Please fill out all your input fields!")
+		valid = False
+	if request.POST.get('date') < unicode(today):
+		messages.add_message(request, messages.INFO, "Please choose a future date!")
+		valid = False
+	if request.POST.get('date') == unicode(today) and request.POST.get('time') < unicode(time):
+		messages.add_message(request, messages.INFO, "Please choose a future time!")
+		valid = False
+	if valid == True:
+		status = request.POST.get('status'),
+		Appointment.objects.create(
+			date = request.POST.get('date'),
+			time = request.POST.get('time'),
+			task = request.POST.get('task'),
+			user = User.objects.get(id=request.session["user_id"])
+		)
 	return redirect('/home')
 
 
@@ -66,14 +82,21 @@ def editpage(request, id):
     }
     return render(request, 'main/edit.html', context)
 
-def edit(request):
-	appointment = Appointment.objects.get(id=id),
-	Appointment.objects.filter(appointment=appointment).update(
-		user = User.objects.get(id=request.session["user_id"]),
-		date = str(request.POST.get('date')),
-		time = request.POST.get('time'),
-		task = request.POST.get('task'),
-	)
+def edit(request, id):
+	today = date.today()
+	time = datetime.now().time
+	valid = True
+	if len(request.POST.get('task')) < 1 or len(request.POST.get('date')) < 1 or len(request.POST.get('time')) < 1:
+		messages.add_message(request, messages.INFO, "Please fill out all your input fields!")
+		valid = False
+	if request.POST.get('date') < unicode(today):
+		messages.add_message(request, messages.INFO, "Please choose a future date!")
+		valid = False
+	if request.POST.get('date') == unicode(today) and request.POST.get('time') < unicode(time):
+		messages.add_message(request, messages.INFO, "Please choose a future time!")
+		valid = False
+	if valid == True:
+		Appointment.objects.filter(id=id).update(task=request.POST['task'],date=request.POST['date'], time=request.POST['time'], status=status)
 	return redirect ('/home')
 
 def delete(request, id):

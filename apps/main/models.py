@@ -51,6 +51,7 @@ class User(models.Model):
 class Appointment(models.Model):
     date = models.CharField(max_length=255)
     time = models.CharField(max_length=255)
+    status = models.TextField(max_length=250, default= 'Pending')
     task = models.TextField()
     user = models.ForeignKey(User, related_name="appointments")
     created_at = models.DateTimeField(auto_now_add = True)

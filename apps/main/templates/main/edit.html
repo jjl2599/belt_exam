@@ -11,12 +11,22 @@
       <button><a href='/'>Logout</a></button>
     </div>
     <div id="editinfo">
-      <form action="/edit" method = "post">
+      <form action="/edit/{{appointment.id}}" method = "post">
         {% csrf_token %}
-        <p>Date:</p><input type="date" name="date">
-        <p>Time:</p><input type="time" name="time">
-        <p>Task:</p><textarea name="task" rows="6" cols="40"></textarea>
-        <input type="submit" value = "Add">
+
+        <p>Date:</p><input value="{{appointment.date}}" type="date" name="date">
+        <p>Time:</p><input value="{{appointment.time}}" type="time" name="time">
+        <p>
+          Status:
+          <select value="appointment.status" name='status'>
+            <option value="pending">Pending</option>
+            <option value="missed">Missed</option>
+            <option value="done">Done</option>
+          </select>
+        </p>
+        <p>Task:</p><textarea value="{{appointment.task}}" name="task" rows="6" cols="40"></textarea>
+
+        <input type="submit" value = "Update">
       </form>
     </div>
     </div>

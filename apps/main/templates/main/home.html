@@ -27,12 +27,7 @@
         <tr>
           <td> {{appointment.task}} </td>
           <td> {{appointment.time}} </td>
-          {% if appointment.curr_time < appointment.time %}
-            <td>Pending</td>
-          {% endif %}
-          {% if appointment.curr_time > appointment.time %}
-            <td>Done</td>
-          {% endif %}
+          <td> {{appointment.status}} </td>
           <td>
             <a href="/editpage/{{appointment.id}}">Edit</a> <a href="/delete/{{appointment.id}}">Delete</a>
           </td>
